@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -266,6 +267,8 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
         }
     }
 
+
+
     private void guardarIncidencia() {
         new AlertDialog.Builder(getContext())
                 .setTitle("Mensaje de Alerta")
@@ -285,7 +288,9 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
                                     viewMain.FMenuIEditTextReferencia.getText().toString(),
                                     viewMain.FMenuIEditTextRepresentante.getText().toString()
                             );
-                            insertIncidencia(incidente);
+                            ServiceInsert serviceInsert = new ServiceInsert(incidente);
+                            serviceInsert.execute();
+                            //insertIncidencia(incidente);
                             finalizar();
                         }else{
                             Toast.makeText(activity, "Error al obtener la coordenadas\n Intente en unos segundo", Toast.LENGTH_SHORT).show();
@@ -432,6 +437,7 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
         });
     }
 
+
     private void finalizar() {
         new AlertDialog.Builder(getContext())
                 .setTitle("Informe")
@@ -522,6 +528,33 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
         activity.setLstA(new ArrayList<>());
         activity.setLstF(new ArrayList<>());
         activity.onBackPressed();
+    }
+
+    public class ServiceInsert extends AsyncTask<Void,Void,String> {
+
+        Incidente incidente;
+
+        public ServiceInsert(Incidente incidente) {
+            this.incidente = incidente;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            viewMain.FMenuIButtonGuardarIncidencia.setEnabled(false);
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            insertIncidencia(incidente);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            viewMain.FMenuIButtonGuardarIncidencia.setEnabled(true);
+        }
     }
 
 
