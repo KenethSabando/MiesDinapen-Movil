@@ -41,6 +41,7 @@ public class MetodosConvert {
         }
         return encoded;
     }*/
+
     public static String convertImageEncoded(Bitmap bmp) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);

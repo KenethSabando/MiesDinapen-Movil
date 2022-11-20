@@ -3,6 +3,7 @@ package com.example.mies_dinapen.View.Fragment.Galeria;
 import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,6 +29,8 @@ import com.example.mies_dinapen.View.Fragment.Galeria.Adaptador.Adaptador_Galeri
 import com.example.mies_dinapen.View.Fragment.ReproducirAudio.Adaptador.Adaptador_ReproAudio;
 import com.example.mies_dinapen.databinding.FragmentGaleriaBinding;
 import com.example.mies_dinapen.databinding.FragmentReproducirAudioBinding;
+
+import java.util.regex.Pattern;
 
 public class GaleriaFragment extends Fragment implements View.OnClickListener{
 
@@ -67,7 +70,7 @@ public class GaleriaFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         if(view == viewMain.FGaleriaButtonAgregar){
             String fotoDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/Mies-Dinapen/";
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setDataAndType(Uri.parse(fotoDir),"image/*");
             galerialauncher.launch(intent);
         }
@@ -79,10 +82,31 @@ public class GaleriaFragment extends Fragment implements View.OnClickListener{
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == RESULT_OK) {
-                        Log.e("TAG", "onActivityResult: " + result.getData().getData().toString() );
-                        activity.getLstF().add(result.getData().getData().toString());
-                        adaptador_galeria.notifyDataSetChanged();
+                        Log.e("TAG", "onActivityResult: " + result.getData().getData().toString());
+                        String path = result.getData().getData().toString();
+                        Pattern pattern = Pattern.compile("\\w{7}[:][/]{2}\\w{5}[/]\\w{8}[/]\\w{6}[/]");
+                        if(pattern.matcher(path).find()){
+                            activity.getLstF().add(getRealPathFromURI(Uri.parse(path)));
+                            adaptador_galeria.notifyDataSetChanged();
+                        }else{
+                            Toast.makeText(activity, "No se pudo abrir el archivo, Seleccione otro provedor", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             });
+
+    public String getRealPathFromURI(Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = {MediaStore.Images.Media.DATA};
+            cursor = getContext().getContentResolver().query(contentUri, proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
 }

@@ -7,50 +7,47 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
 import com.example.mies_dinapen.databinding.FragmentMenuIncidenciaBinding;
 
 
-public class Localizacion implements LocationListener {
+public class Localizacion   extends ViewModel{
 
-    FragmentMenuIncidenciaBinding fragmentContenedor;
-    Context context;
+    MutableLiveData<Double> Latitud;
+    MutableLiveData<Double> Longitud;
 
-    public Localizacion(FragmentMenuIncidenciaBinding fragmentContenedor, Context context) {
-        this.fragmentContenedor = fragmentContenedor;
-        this.context = context;
+    public Localizacion() {
+        Latitud = new MutableLiveData<>();
+        Longitud = new MutableLiveData<>();
+        initData();
+    }
+    private void initVariable(){
+        Latitud = new MutableLiveData<>();
+        Longitud = new MutableLiveData<>();
+    }
+    private void initData(){
+        Latitud.setValue(new Double(0.00));
+        Longitud.setValue(new Double(0.00));
     }
 
-    @Override
-    public void onLocationChanged(Location loc) {
-        loc.getLatitude();
-        loc.getLongitude();
-        fragmentContenedor.FMenuITextViewLatitud.setText(String.valueOf(loc.getLatitude()));
-        fragmentContenedor.FMenuITextViewLongitud.setText(String.valueOf(loc.getLongitude()));
+    public LiveData<Double> getLatitud() {
+        return Latitud;
     }
 
-    @Override
-    public void onProviderDisabled(String provider) {
-        Toast.makeText(context, "El provedor de Ubicacion esta deshabilitado ", Toast.LENGTH_SHORT).show();
+    public void setLatitud(Double latitud) {
+        Latitud.setValue(latitud);
     }
 
-    @Override
-    public void onProviderEnabled(String provider) {
-        Toast.makeText(context, "El provedor de Ubicacion esta habilitado ", Toast.LENGTH_SHORT).show();
+    public LiveData<Double> getLongitud() {
+        return Longitud;
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        switch (status) {
-            case LocationProvider.AVAILABLE:
-                Log.d("debug", "LocationProvider.AVAILABLE");
-                break;
-            case LocationProvider.OUT_OF_SERVICE:
-                Log.d("debug", "LocationProvider.OUT_OF_SERVICE");
-                break;
-            case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                Log.d("debug", "LocationProvider.TEMPORARILY_UNAVAILABLE");
-                break;
-        }
+    public void setLongitud(Double longitud) {
+        Longitud.setValue(longitud);
     }
 
 }

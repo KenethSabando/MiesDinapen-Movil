@@ -131,7 +131,7 @@ public class GrabarAudioFragment extends Fragment implements View.OnClickListene
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
             ContentValues values = new ContentValues();
             values.put(MediaStore.Audio.Media.DISPLAY_NAME, path);
-            values.put(MediaStore.Audio.Media.MIME_TYPE, "audio/*");
+            values.put(MediaStore.Audio.Media.MIME_TYPE, "audio/mpeg");
             values.put(MediaStore.Audio.Media.RELATIVE_PATH, "Podcasts/Mies-Dinapen/");
             Uri collection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
             Uri auidoUri = getActivity().getContentResolver().insert(collection,values);

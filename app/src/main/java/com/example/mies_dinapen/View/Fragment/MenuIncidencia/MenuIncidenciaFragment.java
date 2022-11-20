@@ -30,6 +30,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavDeepLinkRequest;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -76,6 +78,20 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
 
     Boolean salir;
 
+    Localizacion mViewModel;
+
+    final Observer<Double> latitud = new Observer<Double>() {
+        @Override
+        public void onChanged(Double latitud) {
+            viewMain.FMenuITextViewLatitud.setText(String.valueOf(latitud));
+        }
+    };
+    final Observer<Double> longitud = new Observer<Double>() {
+        @Override
+        public void onChanged(Double longitud) {
+            viewMain.FMenuITextViewLongitud.setText(String.valueOf(longitud));
+        }
+    };
 
     public MenuIncidenciaFragment() {
     }
@@ -97,6 +113,7 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
         activity = (Activity_Contenedor) getActivity();
         initdata();
         setViewData();
+        IniciarLocation();
         initEventClick();
         backFragment();
 
@@ -119,7 +136,6 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
     private void setViewData(){
         viewMain.FMenuITextViewOperador.setText(nombreOperador);
         viewMain.FMenuITextViewFecha.setText(new SimpleDateFormat(" yyyy-MM-dd HH:mm:ss").format(new Date()));
-        IniciarLocation();
     }
 
     private void initEventClick(){
@@ -257,20 +273,24 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Incidente incidente = new Incidente(
-                                1,
-                                Float.parseFloat(viewMain.FMenuITextViewLatitud.getText().toString()),
-                                Float.parseFloat(viewMain.FMenuITextViewLongitud.getText().toString()),
-                                viewMain.FMenuITextViewFecha.getText().toString(),
-                                1,
-                                idOperador,
-                                viewMain.FMenuIEditTextReferencia.getText().toString(),
-                                viewMain.FMenuIEditTextRepresentante.getText().toString()
-                        );
-                        insertIncidencia(incidente);
-                        finalizar();
+                        if(!viewMain.FMenuITextViewLatitud.getText().toString().equals("Asignando..")&&
+                        !viewMain.FMenuITextViewLongitud.getText().toString().equals("Asignando..")){
+                            Incidente incidente = new Incidente(
+                                    1,
+                                    Float.parseFloat(viewMain.FMenuITextViewLatitud.getText().toString()),
+                                    Float.parseFloat(viewMain.FMenuITextViewLongitud.getText().toString()),
+                                    viewMain.FMenuITextViewFecha.getText().toString(),
+                                    1,
+                                    idOperador,
+                                    viewMain.FMenuIEditTextReferencia.getText().toString(),
+                                    viewMain.FMenuIEditTextRepresentante.getText().toString()
+                            );
+                            insertIncidencia(incidente);
+                            finalizar();
+                        }else{
+                            Toast.makeText(activity, "Error al obtener la coordenadas\n Intente en unos segundo", Toast.LENGTH_SHORT).show();
+                        }
                     }
-
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     @Override
@@ -304,9 +324,11 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
 
     private void insertFoto(String id) {
         for (int q = 0; q < activity.getLstF().size(); q++) {
+            File file = new File(activity.getLstF().get(q));
             Bitmap bits = BitmapFactory.decodeFile(activity.getLstF().get(q));
             String nombre = id + "_Fotos_" + q;
             String path = "https://miesdinapen.tk/api/Fotos/Uploads/" + nombre + ".png";
+            Log.e("TAG", "insertFoto: " + bits + " "+file.exists() +" "+  activity.getLstF().get(q) );
             String var = convertImageEncoded(bits);
             //
             insertarFotoFile(nombre, var);
@@ -441,20 +463,9 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
     }
 
     private void IniciarLocation() {
-
-        LocationManager mlocManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-        Localizacion Local = new Localizacion(viewMain, getContext());
-
-        if (!mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(settingsIntent);
-        }
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-            return;
-        }
-        mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, (LocationListener) Local);
-        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) Local);
+        mViewModel = activity.getmViewModel();
+        mViewModel.getLatitud().observe(activity, latitud);
+        mViewModel.getLongitud().observe(activity, longitud);
     }
 
     public String getRealPathFromURI(Context context, Uri contentUri) {
@@ -512,4 +523,6 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
         activity.setLstF(new ArrayList<>());
         activity.onBackPressed();
     }
+
+
 }
