@@ -10,14 +10,23 @@
         android:layout_height="match_parent"
         android:layout_margin="10dp"
         android:orientation="vertical"
-        android:gravity="top">
+        android:gravity="center">
         <TextView
-            android:id="@+id/F_ConsultarC_TextView_Contador"
+            android:id="@+id/F_ConsultarA_TextView_Contador"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textSize="20sp"
-            android:text="Numero de Audios: "/>
+            android:text="Audios: "/>
+
+        <Button
+            android:id="@+id/F_ConsultarA_Button_Agregar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:text="Agregar audio de podcast"
+            android:drawableRight="@drawable/ic_audio_podcast_24"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/F_ConsultarC_RecyclerV_Hinci"

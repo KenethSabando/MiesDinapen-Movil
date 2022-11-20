@@ -79,6 +79,8 @@ public class ConsultarCedulaFragment extends Fragment implements View.OnClickLis
                         Log.e("TAG", "onResponse: " + t);
                     }
                 });
+            }else{
+                adaptador_Incidencia_historial.setDatos(new ArrayList<>());
             }
 
         }

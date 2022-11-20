@@ -22,12 +22,11 @@ public class Adaptador_ReproAudio extends RecyclerView.Adapter<Adaptador_ReproAu
 
     Activity_Contenedor activityContenedor;
     LayoutInflater layoutInflater;
-    ArrayList<String> datos;
+    MediaPlayer mediaPlayer;
 
     public Adaptador_ReproAudio(Activity_Contenedor activityContenedor) {
         this.activityContenedor = activityContenedor;
         this.layoutInflater = LayoutInflater.from(activityContenedor);
-        this.datos = new ArrayList<>();
     }
 
     @NonNull
@@ -39,17 +38,16 @@ public class Adaptador_ReproAudio extends RecyclerView.Adapter<Adaptador_ReproAu
 
     @Override
     public void onBindViewHolder(@NonNull Adaptador_ReproAudio.ViewHolder holder, int position) {
-        holder.bindata(datos.get(position));
+        holder.bindata(activityContenedor.getLstA().get(position));
     }
 
     @Override
     public int getItemCount() {
-        return datos.size();
+        return activityContenedor.getLstA().size();
     }
 
-    public void setDatos(ArrayList<String> datos_item){
-        this.datos = datos_item;
-        notifyDataSetChanged();
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -58,8 +56,6 @@ public class Adaptador_ReproAudio extends RecyclerView.Adapter<Adaptador_ReproAu
 
         Button delete, play;
 
-        MediaPlayer mediaPlayer;
-        int posicion = 0;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nombre = itemView.findViewById(R.id.I_AudioL_TextView_Nombre);
@@ -91,6 +87,7 @@ public class Adaptador_ReproAudio extends RecyclerView.Adapter<Adaptador_ReproAu
             if(view == play){
                 if(mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
+                    mediaPlayer.reset();
                     play.setBackground(activityContenedor.getResources().getDrawable(R.drawable.ic_play_24));
                 } else {
                     try {

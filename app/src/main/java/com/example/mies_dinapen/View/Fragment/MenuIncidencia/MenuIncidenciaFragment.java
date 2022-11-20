@@ -46,6 +46,7 @@ import android.widget.Toast;
 import com.example.mies_dinapen.Model.Audio;
 import com.example.mies_dinapen.Model.Foto;
 import com.example.mies_dinapen.Model.Incidente;
+import com.example.mies_dinapen.Model.Operador;
 import com.example.mies_dinapen.R;
 import com.example.mies_dinapen.View.Activity.Activity_Contenedor;
 import com.example.mies_dinapen.databinding.FragmentMenuIncidenciaBinding;
@@ -73,6 +74,8 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
     Integer idOperador;
     String nombreOperador, ImagePath;
 
+    Boolean salir;
+
 
     public MenuIncidenciaFragment() {
     }
@@ -95,7 +98,7 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
         initdata();
         setViewData();
         initEventClick();
-
+        backFragment();
 
         return viewMain.getRoot();
     }
@@ -104,6 +107,7 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
 
 
     private void initdata(){
+        salir = true;
         nombreOperador = activity.getOperador().getOperaNombres()
                 + " " + activity.getOperador().getOperaApellido1()
                 + " " + activity.getOperador().getOperaApellido2();
@@ -127,6 +131,7 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
 
         viewMain.FMenuITextViewCantidadAudios.setOnClickListener(this);
         viewMain.FMenuITextViewCantidadFotos.setOnClickListener(this);
+
     }
 
     @Override
@@ -209,7 +214,7 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
             ContentValues values = new ContentValues();
             values.put(MediaStore.Images.Media.DISPLAY_NAME, path);
             values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
-            values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Mies-Dinapen/"+idOperador);
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Mies-Dinapen/");
             Uri collection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
             Uri fotoUri = getActivity().getContentResolver().insert(collection,values);
             this.pushFotoOut(0, fotoUri , null);
@@ -217,7 +222,7 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
             getActivity().getContentResolver().update(fotoUri,values,null,null);
             return new File(getRealPathFromURI(getContext(), fotoUri));
         }else{
-            String fotoDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+            String fotoDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/Mies-Dinapen/";
             String fotoName = path+".png";
             File fotoFile = new File(fotoDir,fotoName);
             this.pushFotoOut(1,null, fotoFile);
@@ -465,5 +470,46 @@ public class MenuIncidenciaFragment extends Fragment implements View.OnClickList
                 cursor.close();
             }
         }
+    }
+
+    private void backFragment(){
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(salir){
+                    AlertDialog.Builder builderAlerta = new AlertDialog.Builder(getContext());
+                    builderAlerta.setTitle("Advertencia");
+                    builderAlerta.setMessage("Perdera Archivos Seleccionados")
+                            .setPositiveButton("Salir", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    salir = false;
+                                    activity.onBackPressed();
+                                }
+                            })
+                            .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setCancelable(false).show();
+                }else{
+                    //Este remove cancela el OnBackPressedCallback "IMPORTANTE"
+                    remove();
+                    backpressed();
+
+                }
+
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),callback);
+    }
+
+    private void backpressed(){
+        salir = false;
+        activity.setLstA(new ArrayList<>());
+        activity.setLstF(new ArrayList<>());
+        activity.onBackPressed();
     }
 }

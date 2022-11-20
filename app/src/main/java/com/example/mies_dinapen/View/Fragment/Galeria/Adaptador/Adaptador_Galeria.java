@@ -21,12 +21,10 @@ public class Adaptador_Galeria extends RecyclerView.Adapter<Adaptador_Galeria.Vi
 
     Activity_Contenedor activityContenedor;
     LayoutInflater layoutInflater;
-    ArrayList<String> datos;
 
     public Adaptador_Galeria(Activity_Contenedor activityContenedor)  {
         this.activityContenedor = activityContenedor;
         this.layoutInflater = LayoutInflater.from(activityContenedor);
-        this.datos = new ArrayList<>();
     }
 
     @NonNull
@@ -38,18 +36,14 @@ public class Adaptador_Galeria extends RecyclerView.Adapter<Adaptador_Galeria.Vi
 
     @Override
     public void onBindViewHolder(@NonNull Adaptador_Galeria.ViewHolder holder, int position) {
-        holder.bindata(datos.get(position));
+        holder.bindata(activityContenedor.getLstF().get(position));
     }
 
     @Override
     public int getItemCount() {
-        return datos.size();
+        return activityContenedor.getLstF().size();
     }
 
-    public void setDatos(ArrayList<String> datos_item){
-        this.datos = datos_item;
-        notifyDataSetChanged();
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 

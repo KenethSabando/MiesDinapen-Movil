@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:text="Instutucion: "/>
+                android:text="Institucion: "/>
 
             <TextView
                 android:id="@+id/F_MenuO_TextView_Institucion"

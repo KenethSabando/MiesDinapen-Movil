@@ -48,10 +48,6 @@ dependencies {
     //Navegacion con Fragments
     implementation "androidx.navigation:navigation-fragment:2.5.3"
     implementation "androidx.navigation:navigation-ui:2.5.3"
-    //SplashScreen
+    //SplashScreen - Ya creo que no la uso
     implementation 'androidx.core:core-splashscreen:1.0.0'
-
-
-
-
 }

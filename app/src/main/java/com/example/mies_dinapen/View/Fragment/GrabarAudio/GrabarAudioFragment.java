@@ -140,7 +140,7 @@ public class GrabarAudioFragment extends Fragment implements View.OnClickListene
             getActivity().getContentResolver().update(auidoUri,values,null,null);
             return getRealPathFromURI(getContext(),auidoUri);
         }else{
-            String audioDir = Environment.getExternalStoragePublicDirectory("Podcasts")+"/Mies-Dinapen/";
+            String audioDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getPath()+"/Mies-Dinapen/";
             String audioName = path+".mp3";
             File audioFile = new File(audioDir,audioName);
             this.pushAudioOut(1,null, audioFile);
