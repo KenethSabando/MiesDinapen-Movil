@@ -22,10 +22,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.mies_dinapen.View.Activity.Activity_Contenedor;
 import com.example.mies_dinapen.View.Fragment.ReproducirAudio.Adaptador.Adaptador_ReproAudio;
 import com.example.mies_dinapen.databinding.FragmentReproducirAudioBinding;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ReproducirAudioFragment extends Fragment implements View.OnClickListener {
 
@@ -70,9 +74,12 @@ public class ReproducirAudioFragment extends Fragment implements View.OnClickLis
     @Override
     public void onClick(View view) {
         if(view == viewMain.FConsultarAButtonAgregar){
-            String fotoDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getPath() + "/Mies-Dinapen/";
+            if(adaptador_reproAudio.getMediaPlayer()!= null){
+                adaptador_reproAudio.getMediaPlayer().stop();
+            }
+            String audioDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS).getPath() + "/Mies-Dinapen/";
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setDataAndType(Uri.parse(fotoDir),"audio/mpeg");
+            intent.setDataAndType(Uri.parse(audioDir),"audio/*");
             reproductorlauncher.launch(intent);
         }
     }
@@ -83,8 +90,13 @@ public class ReproducirAudioFragment extends Fragment implements View.OnClickLis
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == RESULT_OK) {
-                        Log.e("TAG", "onActivityResult: " + result.getData().getData().toString() );
-                        activity.getLstA().add(result.getData().getData().toString());
+                        String path = result.getData().getData().toString();
+                        Pattern  pattern = Pattern.compile("\\w{7}[:][/]{2}\\w{5}[/]\\w{8}[/]\\w{5}[/]");
+                        if(pattern.matcher(path).find()){
+                            activity.getLstA().add(getRealPathFromURI(Uri.parse(result.getData().getData().toString())));
+                        }else{
+                            activity.getLstA().add(result.getData().getData().toString());
+                        }
                         adaptador_reproAudio.notifyDataSetChanged();
                     }
                 }

@@ -1,7 +1,9 @@
 package com.example.mies_dinapen.View.Fragment.ReproducirAudio.Adaptador;
 
+import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,10 +81,7 @@ public class Adaptador_ReproAudio extends RecyclerView.Adapter<Adaptador_ReproAu
         }
 
         public void bindata(String name) {
-            Log.e("TAG", "bindata: " + name );
-            Uri uri = Uri.parse(name);
-            File file = new File(uri.getPath());
-            nombre.setText(file.getName());
+            nombre.setText(new File(Uri.parse(name).getPath()).getName());
         }
 
         @Override
