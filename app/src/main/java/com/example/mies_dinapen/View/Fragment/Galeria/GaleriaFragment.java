@@ -79,6 +79,7 @@ public class GaleriaFragment extends Fragment implements View.OnClickListener{
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == RESULT_OK) {
+                        Log.e("TAG", "onActivityResult: " + result.getData().getData().toString() );
                         activity.getLstF().add(result.getData().getData().toString());
                         adaptador_galeria.notifyDataSetChanged();
                     }

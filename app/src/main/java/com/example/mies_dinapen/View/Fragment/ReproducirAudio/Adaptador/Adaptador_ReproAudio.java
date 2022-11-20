@@ -2,6 +2,7 @@ package com.example.mies_dinapen.View.Fragment.ReproducirAudio.Adaptador;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,10 @@ public class Adaptador_ReproAudio extends RecyclerView.Adapter<Adaptador_ReproAu
         return mediaPlayer;
     }
 
+    public void setMediaPlayer(MediaPlayer mediaPlayer) {
+        this.mediaPlayer = mediaPlayer;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView nombre;
@@ -74,8 +79,10 @@ public class Adaptador_ReproAudio extends RecyclerView.Adapter<Adaptador_ReproAu
         }
 
         public void bindata(String name) {
-            File archivo = new File(name);
-            nombre.setText(archivo.getName());
+            Log.e("TAG", "bindata: " + name );
+            Uri uri = Uri.parse(name);
+            File file = new File(uri.getPath());
+            nombre.setText(file.getName());
         }
 
         @Override
@@ -92,7 +99,10 @@ public class Adaptador_ReproAudio extends RecyclerView.Adapter<Adaptador_ReproAu
                 } else {
                     try {
                         mediaPlayer.reset();
-                        mediaPlayer.setDataSource(activityContenedor.getLstA().get(getAdapterPosition()));
+                        mediaPlayer.setDataSource(
+                                activityContenedor
+                                ,Uri.parse(activityContenedor.getLstA().get(getAdapterPosition()))
+                        );
                         mediaPlayer.prepare();
                         mediaPlayer.start();
                         play.setBackground(activityContenedor.getResources().getDrawable(R.drawable.ic_pause_24));

@@ -5,6 +5,7 @@ import static android.app.Activity.RESULT_OK;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -63,7 +64,7 @@ public class ReproducirAudioFragment extends Fragment implements View.OnClickLis
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        adaptador_reproAudio.getMediaPlayer().stop();
+        adaptador_reproAudio.setMediaPlayer(new MediaPlayer());
     }
 
     @Override
@@ -83,7 +84,7 @@ public class ReproducirAudioFragment extends Fragment implements View.OnClickLis
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == RESULT_OK) {
                         Log.e("TAG", "onActivityResult: " + result.getData().getData().toString() );
-                        activity.getLstA().add(getRealPathFromURI(result.getData().getData()));
+                        activity.getLstA().add(result.getData().getData().toString());
                         adaptador_reproAudio.notifyDataSetChanged();
                     }
                 }

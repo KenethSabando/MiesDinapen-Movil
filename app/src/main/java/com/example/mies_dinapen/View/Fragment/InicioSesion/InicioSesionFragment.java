@@ -57,6 +57,8 @@ public class InicioSesionFragment extends Fragment implements View.OnClickListen
             HashMap<String, String> datosInput = new HashMap<>();
             datosInput.put("OperaNCedula", cedula);
             datosInput.put("password", contra);
+            viewMain.FIniciSEdittextCedula.setText(cedula);
+            viewMain.FIniciSEdittextContraseA.setText(contra);
             getConsulta(datosInput);
         }else{
             Toast.makeText(activity, "Operador no Identificado", Toast.LENGTH_SHORT).show();
